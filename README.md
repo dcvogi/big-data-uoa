@@ -49,19 +49,19 @@ following format:
 
 ### Υλοποίηση Κατηγοριοποίησης (Classification)
 Here you have to test 2 classification Classification techniques:
-    * Support Vector Machines (SVM).
-    * Random Forests.
+  * Support Vector Machines (SVM).
+  * Random Forests.
 Also, you have to evaluate the performance of the above classification techniques using the
 following features:
-    * Bag of Words (BoW).
-    * SVD keeping the 90% of the total variance (SVD).
-    * Average word vector for each vector (W2V).
+  * Bag of Words (BoW).
+  * SVD keeping the 90% of the total variance (SVD).
+  * Average word vector for each vector (W2V).
     
 You should also evaluate and report the performance of each method using 10-fold Cross
 Validation using the following metrics:
-    * Accuracy
-    * Precision
-    * Recall
+  * Accuracy
+  * Precision
+  * Recall
     
     
 ### Beat the Benchmark
@@ -71,9 +71,9 @@ achieved at your previous query. You should report and justify the steps you hav
 
 Output Files
 Your code should for the queries related to Classification should create the following files:
-    * EvaluationMetric_10fold.csv
-    * testSet_categories.csv
-    * roc_10fold.png
+  * EvaluationMetric_10fold.csv
+  * testSet_categories.csv
+  * roc_10fold.png
     
 ### Regarding the Report
 The folder that you will submit should have the name:
@@ -91,6 +91,6 @@ methods have the reported results. All work will be evaluated on the basis of th
 documentation and to the extent that they satisfy the demands of this exercise.
 
 Useful Links:
-    * https://radimrehurek.com/gensim/models/word2vec.html
-    * https://code.google.com/archive/p/word2vec/
-    * https://radimrehurek.com/gensim/models/ldamodel.html
+  * https://radimrehurek.com/gensim/models/word2vec.html
+  * https://code.google.com/archive/p/word2vec/
+  * https://radimrehurek.com/gensim/models/ldamodel.html
