@@ -89,10 +89,8 @@ The extensive report that you will deliver should contain the description for yo
 anything else you think to show the tests that you have done, and explain why the chosen
 methods have the reported results. All work will be evaluated on the basis of the correct
 documentation and to the extent that they satisfy the demands of this exercise.
-    Useful Links:
-        * https://radimrehurek.com/gensim/models/word2vec.html
-        * https://code.google.com/archive/p/word2vec/
-        * https://radimrehurek.com/gensim/models/ldamodel.html
-        
-        
-        
+
+Useful Links:
+    * https://radimrehurek.com/gensim/models/word2vec.html
+    * https://code.google.com/archive/p/word2vec/
+    * https://radimrehurek.com/gensim/models/ldamodel.html
