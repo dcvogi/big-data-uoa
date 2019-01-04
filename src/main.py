@@ -1,21 +1,27 @@
 import pandas as pd
 
-from tasks import WordCloudTask
+from tasks import WordCloudTask, AnalyticsTask
 
 
 class Main:
   test_set = pd.read_csv("../datasets/test_set.csv", sep="\t")
-  train_set = pd.read_csv("../datasets/train_set.csv", sep="\t")
+  train_set = pd.read_csv("../datasets/train_set.csv", sep="\t").head(1000)
 
-  @staticmethod
-  def wordcloud(train, test):
-    wc = WordCloudTask(train, test)
+  def wordcloud(self):
+    wc = WordCloudTask(self.train_set, self.test_set)
     wc.run()
 
-  @staticmethod
-  def duplicates(train, test):
+  def duplicates(self):
     pass
 
-  @staticmethod
-  def classification(train, test):
-    pass
+  def classification(self, clf, vectorizer):
+    analytics = AnalyticsTask(self.train_set, self.test_set, classifier=clf, vectorizer=vectorizer, test_size=0.3)
+
+    analytics.run()
+
+main = Main()
+
+main.classification("svm", "bow")
+main.classification("svm", "tfidf")
+main.classification("rf", "bow")
+main.classification("rf", "tfidf")
