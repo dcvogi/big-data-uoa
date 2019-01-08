@@ -1,6 +1,6 @@
 import pandas as pd
 
-from tasks import WordCloudTask, AnalyticsTask
+from tasks import WordCloudTask, AnalyticsTask, DuplicatesTask
 
 
 class Main:
@@ -11,8 +11,9 @@ class Main:
     wc = WordCloudTask(self.train_set, self.test_set)
     wc.run()
 
-  def duplicates(self):
-    pass
+  def duplicates(self, vectorizer, threshold):
+    dp = DuplicatesTask(self.train_set, self.test_set, vectorizer=vectorizer, threshold=threshold)
+    dp.run()
 
   def classification(self, clf, vectorizer):
     analytics = AnalyticsTask(self.train_set, self.test_set, classifier=clf, vectorizer=vectorizer, test_size=0.3)
@@ -25,3 +26,4 @@ main.classification("svm", "bow")
 main.classification("svm", "tfidf")
 main.classification("rf", "bow")
 main.classification("rf", "tfidf")
+main.duplicates("tfidf", 0.7)
