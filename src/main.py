@@ -11,8 +11,8 @@ class Main:
     wc = WordCloudTask(self.train_set, self.test_set)
     wc.run()
 
-  def duplicates(self, vectorizer, threshold):
-    dp = DuplicatesTask(self.train_set, self.test_set, vectorizer=vectorizer, threshold=threshold)
+  def duplicates(self, vectorizer, threshold, stop_words):
+    dp = DuplicatesTask(self.train_set, self.test_set, vectorizer=vectorizer, threshold=threshold, stop_words=stop_words)
     dp.run()
 
   def classification(self, clf, vectorizer):
@@ -26,4 +26,4 @@ main.classification("svm", "bow")
 main.classification("svm", "tfidf")
 main.classification("rf", "bow")
 main.classification("rf", "tfidf")
-main.duplicates("tfidf", 0.7)
+main.duplicates("hash", 0.7, "english")
