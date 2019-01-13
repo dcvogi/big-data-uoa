@@ -21,7 +21,7 @@ class Main:
     analytics.run()
 
 main = Main()
-
+main.wordcloud()
 main.classification("svm", "bow")
 main.classification("svm", "tfidf")
 main.classification("rf", "bow")

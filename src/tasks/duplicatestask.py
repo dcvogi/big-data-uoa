@@ -3,8 +3,8 @@ from .task import Task
 # Third-party libs
 import numpy as np
 import pandas as pd
-from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer, HashingVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+from .vectorizer_selector import VectorizerSelector
 
 class DuplicatesTask(Task):
     def __init__(self, train, test, vectorizer, threshold, stop_words):
@@ -13,20 +13,8 @@ class DuplicatesTask(Task):
         self.train_raw_docs = self.train['Content'].values
         self.stop_words = stop_words
         self.threshold = threshold
+        self.vectorizer = VectorizerSelector(vectorizer, stop_words).vectorizer
 
-        # Initialize vectorizer
-        # TODO: Add Word2Vec vectorizer
-        if vectorizer is 'bow':
-            self.vectorizer = CountVectorizer(stop_words=self.stop_words)
-        elif vectorizer is 'tfidf':
-            self.vectorizer = TfidfVectorizer(stop_words=self.stop_words)
-        elif vectorizer is 'hash':
-            self.vectorizer = HashingVectorizer(stop_words=self.stop_words, n_features=2**4)
-        elif vectorizer is 'w2v':
-            raise NotImplementedError("W2V vectorizer is not implemented")
-        else:
-            raise Exception("{} is not a valid vectorizer".format(vectorizer))
-        
         # Generate document vectors from raw documents
         self.doc_vectors = self.vectorizer.fit_transform(self.train_raw_docs)
         
@@ -46,5 +34,5 @@ class DuplicatesTask(Task):
             sim_docs[index][1] = self.train['Id'].values[similar[1]]
 
         df = pd.DataFrame(sim_docs)
-        df.to_csv("output.csv", header=False, index=False)
+        df.to_csv("../results/duplicatePairs.csv", header=False, index=False)
         
