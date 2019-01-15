@@ -1,7 +1,7 @@
 from .task import Task
 from .evaluation_report import EvaluationReport
+from .vectorizer_selector import VectorizerSelector
 
-from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
@@ -20,16 +20,7 @@ class AnalyticsTask(Task):
         self.classifier = classifier
         self.test_size = test_size
 
-        # Initialize vectorizer
-        # TODO: Add Word2Vec vectorizer
-        if vectorizer is 'bow':
-            self.vectorizer = CountVectorizer(stop_words='english')
-        elif vectorizer is 'tfidf':
-            self.vectorizer = TfidfVectorizer(stop_words='english')
-        elif vectorizer is 'w2v':
-            raise NotImplementedError("W2V vectorizer is not implemented")
-        else:
-            raise Exception("{} is not a valid vectorizer".format(vectorizer))
+        self.vectorizer = VectorizerSelector(vectorizer=vectorizer, stop_words='english').vectorizer
 
         # Generate document vectors from raw documents
         self.doc_vectors = self.vectorizer.fit_transform(self.train_raw_docs)
