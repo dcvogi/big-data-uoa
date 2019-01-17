@@ -1,6 +1,7 @@
 import pandas as pd
 
 from tasks import WordCloudTask, AnalyticsTask, DuplicatesTask
+from vectorizer import EmbeddingsVectorizer
 
 
 class Main:

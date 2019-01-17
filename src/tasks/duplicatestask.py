@@ -3,8 +3,9 @@ from .task import Task
 # Third-party libs
 import numpy as np
 import pandas as pd
+
 from sklearn.metrics.pairwise import cosine_similarity
-from .vectorizer_selector import VectorizerSelector
+from src.vectorizer import VectorizerSelector
 
 class DuplicatesTask(Task):
     def __init__(self, train, test, vectorizer, threshold, stop_words):
@@ -35,4 +36,3 @@ class DuplicatesTask(Task):
 
         df = pd.DataFrame(sim_docs)
         df.to_csv("../results/duplicatePairs.csv", header=False, index=False)
-        

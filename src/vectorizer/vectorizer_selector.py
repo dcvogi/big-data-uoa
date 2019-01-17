@@ -1,5 +1,7 @@
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer, HashingVectorizer
 
+from src.vectorizer import EmbeddingsVectorizer
+
 
 class VectorizerSelector:
     def __init__(self, vectorizer, stop_words):
@@ -12,6 +14,6 @@ class VectorizerSelector:
         elif vectorizer is 'hash':
             self.vectorizer = HashingVectorizer(stop_words=stop_words, n_features=2**8)
         elif vectorizer is 'w2v':
-            raise NotImplementedError("W2V vectorizer is not implemented")
+            self.vectorizer = EmbeddingsVectorizer()
         else:
             raise Exception("{} is not a valid vectorizer".format(vectorizer))

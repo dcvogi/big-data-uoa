@@ -1,8 +1,8 @@
 from .task import Task
 from .evaluation_report import EvaluationReport
-from .vectorizer_selector import VectorizerSelector
+from src.vectorizer import VectorizerSelector
 
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from sklearn.svm import SVC
