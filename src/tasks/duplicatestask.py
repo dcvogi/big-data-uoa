@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 
 from sklearn.metrics.pairwise import cosine_similarity
-from src.vectorizer import VectorizerSelector
+from vectorizer import VectorizerSelector
 
 class DuplicatesTask(Task):
     def __init__(self, train, test, vectorizer, threshold, stop_words):
@@ -21,18 +21,21 @@ class DuplicatesTask(Task):
         
 
     def run_task(self):
-        # Main Functionality goes here
+        # Get the cosine similarity matrix
         similarity_matrix = np.matrix(cosine_similarity(self.doc_vectors))
-        sim_docs = []
-        for i, val in enumerate(similarity_matrix):
-            for j, val_two in enumerate(similarity_matrix):
-                if i != j and j > i:
-                    if similarity_matrix[i, j] > self.threshold:
-                        sim_docs.append([i, j, similarity_matrix[i, j]])
-
-        for index, similar in enumerate(sim_docs):
-            sim_docs[index][0] = self.train['Id'].values[similar[0]]
-            sim_docs[index][1] = self.train['Id'].values[similar[1]]
-
-        df = pd.DataFrame(sim_docs)
-        df.to_csv("../results/duplicatePairs.csv", header=False, index=False)
+        # Get the upper triangular
+        similarity_matrix_triu = np.triu(similarity_matrix, 1)
+        # Replace the index with the Ids
+        similarities = pd.DataFrame(similarity_matrix_triu,
+                                    columns=self.train['Id'],
+                                    index=self.train['Id'])
+        # Return a reshaped DataFrame or Series having a multi-level index                                    
+        similarities = similarities.stack()
+        # Keep the data wich are above the threshold
+        similarities = pd.DataFrame(similarities[similarities > self.threshold])
+        # Renaming
+        similarities.index.rename(['Document_Id1','Document_Id2'], inplace=True)
+        similarities.reset_index(inplace=True)
+        similarities.rename(columns={0: 'Similarity'}, inplace=True)
+        
+        similarities.to_csv('../results/duplicatePairs.csv', index=False)

@@ -1,6 +1,6 @@
 from .task import Task
 from .evaluation_report import EvaluationReport
-from src.vectorizer import VectorizerSelector
+from vectorizer import VectorizerSelector
 
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from sklearn.model_selection import train_test_split

@@ -1,6 +1,6 @@
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer, HashingVectorizer
 
-from src.vectorizer import EmbeddingsVectorizer
+from vectorizer import EmbeddingsVectorizer
 
 
 class VectorizerSelector:
@@ -12,7 +12,7 @@ class VectorizerSelector:
         elif vectorizer is 'tfidf':
             self.vectorizer = TfidfVectorizer(stop_words=stop_words)
         elif vectorizer is 'hash':
-            self.vectorizer = HashingVectorizer(stop_words=stop_words, n_features=2**8)
+            self.vectorizer = HashingVectorizer(stop_words=stop_words, n_features=2**18)
         elif vectorizer is 'w2v':
             self.vectorizer = EmbeddingsVectorizer()
         else:
