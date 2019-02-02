@@ -21,10 +21,12 @@ class Main:
 
     analytics.run()
 
+
 main = Main()
 main.wordcloud()
 main.classification("svm", "bow")
 main.classification("svm", "tfidf")
 main.classification("rf", "bow")
 main.classification("rf", "tfidf")
+main.classification("mlp", "tfidf")
 main.duplicates("tfidf", 0.7, "english")

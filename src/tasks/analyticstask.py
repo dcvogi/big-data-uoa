@@ -7,6 +7,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.neural_network import MLPClassifier
 
 
 class AnalyticsTask(Task):
@@ -44,6 +45,16 @@ class AnalyticsTask(Task):
 
         return rf
 
+    def multilayer_perceptron(self):
+        train_x, test_x, train_y, test_y = train_test_split(self.doc_vectors, self.doc_labels,
+                                                            test_size=self.test_size)
+
+        mlp = MLPClassifier(solver='lbfgs', alpha=1e-5,
+                            hidden_layer_sizes=(15,), random_state=1)
+        mlp.fit(train_x, train_y)
+
+        return mlp
+
     def test_model(self):
         if self.classifier is "svm":
             print "Running Support Vector Machine"
@@ -51,6 +62,9 @@ class AnalyticsTask(Task):
         elif self.classifier is "rf":
             print "Running Random Forest"
             clf = self.random_forest()
+        elif self.classifier is "mlp":
+            print "Running Multi Layer Perceptron"
+            clf = self.multilayer_perceptron()
 
         train_x, test_x, train_y, test_y = train_test_split(self.doc_vectors, self.doc_labels,
                                                             test_size=self.test_size)
