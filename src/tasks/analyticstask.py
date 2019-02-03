@@ -8,10 +8,12 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neural_network import MLPClassifier
+from sklearn.decomposition import TruncatedSVD
 
 
 class AnalyticsTask(Task):
-    def __init__(self, train, test, classifier, vectorizer, test_size):
+    def __init__(self, train, test, classifier, vectorizer, test_size, max_features=100, svd=False,
+                 components_percentage=0.3):
         Task.__init__(self, train, test)
 
         self.label_encoder = LabelEncoder()
@@ -20,11 +22,19 @@ class AnalyticsTask(Task):
         self.test_raw_docs = self.test['Content'].values
         self.classifier = classifier
         self.test_size = test_size
-
-        self.vectorizer = VectorizerSelector(vectorizer=vectorizer, stop_words='english').vectorizer
+        self.svd = svd
+        self.vectorizer = VectorizerSelector(vectorizer=vectorizer, stop_words='english',
+                                             max_features=max_features).vectorizer
 
         # Generate document vectors from raw documents
         self.doc_vectors = self.vectorizer.fit_transform(self.train_raw_docs)
+        self.num_dimensions = max(self.doc_vectors[0].shape)
+
+        if svd:
+            number_of_components = int(components_percentage*self.num_dimensions)
+            svd_model = TruncatedSVD(n_components=number_of_components)
+            self.doc_vectors = svd_model.fit_transform(self.doc_vectors)
+
         self.doc_labels = self.label_encoder.fit_transform(self.train_raw_labels)
 
     def support_vector_machine(self):
@@ -56,14 +66,13 @@ class AnalyticsTask(Task):
         return mlp
 
     def test_model(self):
+        print "Classifier={}, Vectorizer={}, SVD={}".format(self.classifier, type(self.vectorizer).__name__, self.svd)
+
         if self.classifier is "svm":
-            print "Running Support Vector Machine"
             clf = self.support_vector_machine()
         elif self.classifier is "rf":
-            print "Running Random Forest"
             clf = self.random_forest()
         elif self.classifier is "mlp":
-            print "Running Multi Layer Perceptron"
             clf = self.multilayer_perceptron()
 
         train_x, test_x, train_y, test_y = train_test_split(self.doc_vectors, self.doc_labels,
@@ -71,9 +80,7 @@ class AnalyticsTask(Task):
 
         predicted = clf.predict(test_x)
 
-        print self.evaluate(test_y, predicted).__dict__
-
-        return predicted
+        return self.evaluate(test_y, predicted).__dict__
 
     def evaluate(self, test_y, predicted):
         prec = precision_score(test_y, predicted, average='macro')
@@ -88,4 +95,4 @@ class AnalyticsTask(Task):
         return report
 
     def run_task(self):
-        self.test_model()
+        return self.test_model()
