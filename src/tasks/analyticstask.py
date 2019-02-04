@@ -2,7 +2,7 @@ from .task import Task
 from .evaluation_report import EvaluationReport
 from vectorizer import VectorizerSelector
 
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from sklearn.svm import SVC
@@ -12,10 +12,11 @@ from sklearn.decomposition import TruncatedSVD
 
 
 class AnalyticsTask(Task):
-    def __init__(self, train, test, classifier, vectorizer, test_size, max_features=100, svd=False,
-                 components_percentage=0.3):
+    def __init__(self, train, test, classifier, vectorizer, test_size, max_features=100, svd=False):
         Task.__init__(self, train, test)
 
+        self.random_state = 512
+        self.number_of_components = 550
         self.label_encoder = LabelEncoder()
         self.train_raw_docs = self.train['Content'].values
         self.train_raw_labels = self.train['Category'].values
@@ -31,36 +32,34 @@ class AnalyticsTask(Task):
         self.num_dimensions = max(self.doc_vectors[0].shape)
 
         if svd:
-            number_of_components = int(components_percentage*self.num_dimensions)
-            svd_model = TruncatedSVD(n_components=number_of_components)
+            svd_model = TruncatedSVD(n_components=self.number_of_components)    
             self.doc_vectors = svd_model.fit_transform(self.doc_vectors)
-
+        
         self.doc_labels = self.label_encoder.fit_transform(self.train_raw_labels)
 
     def support_vector_machine(self):
         train_x, test_x, train_y, test_y = train_test_split(self.doc_vectors, self.doc_labels,
-                                                            test_size=self.test_size)
+                                                            test_size=self.test_size, random_state=self.random_state, stratify=self.doc_labels)
 
-        svc = SVC(kernel='linear')
+        svc = SVC(kernel='linear', random_state=self.random_state)
         svc.fit(train_x, train_y)
 
         return svc
 
     def random_forest(self):
         train_x, test_x, train_y, test_y = train_test_split(self.doc_vectors, self.doc_labels,
-                                                            test_size=self.test_size)
+                                                            test_size=self.test_size, random_state=self.random_state, stratify=self.doc_labels)
 
-        rf = RandomForestClassifier()
+        rf = RandomForestClassifier(random_state=self.random_state)
         rf.fit(train_x, train_y)
 
         return rf
 
     def multilayer_perceptron(self):
         train_x, test_x, train_y, test_y = train_test_split(self.doc_vectors, self.doc_labels,
-                                                            test_size=self.test_size)
+                                                            test_size=self.test_size, random_state=self.random_state, stratify=self.doc_labels)
 
-        mlp = MLPClassifier(solver='lbfgs', alpha=1e-5,
-                            hidden_layer_sizes=(15,), random_state=1)
+        mlp = MLPClassifier(solver='lbfgs', alpha=0.7, random_state=self.random_state)
         mlp.fit(train_x, train_y)
 
         return mlp
@@ -79,7 +78,6 @@ class AnalyticsTask(Task):
                                                             test_size=self.test_size)
 
         predicted = clf.predict(test_x)
-
         return self.evaluate(test_y, predicted).__dict__
 
     def evaluate(self, test_y, predicted):

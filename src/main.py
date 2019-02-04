@@ -11,7 +11,7 @@ class Main:
         os.mkdir("../results")
 
   test_set = pd.read_csv("../datasets/test_set.csv", sep="\t")
-  train_set = pd.read_csv("../datasets/train_set.csv", sep="\t").head(100)
+  train_set = pd.read_csv("../datasets/train_set.csv", sep="\t")
 
   def wordcloud(self):
     wc = WordCloudTask2(self.train_set, self.test_set)
@@ -22,25 +22,25 @@ class Main:
     dp.run()
 
   def classification(self, clf, vectorizer, mf=100, svd=False, components_perc=None):
-    analytics = AnalyticsTask(self.train_set, self.test_set, classifier=clf, vectorizer=vectorizer, test_size=0.3,
-                              svd=svd, components_percentage=components_perc, max_features=mf)
+    analytics = AnalyticsTask(self.train_set, self.test_set, classifier=clf, vectorizer=vectorizer, test_size=0.2,
+                              svd=svd, max_features=mf)
 
     return analytics.run()
 
   def export_evaluation_report(self):
-    components_percentage = 0.9
     max_features = 1000
 
     svm_bow = self.classification("svm", "bow", mf=max_features)
     rf_bow = self.classification("rf", "bow", mf=max_features)
-    svm_bow_svd = self.classification("svm", "bow", mf=max_features, svd=True, components_perc=components_percentage)
-    rf_bow_svd = self.classification("rf", "bow", mf=max_features, components_perc=components_percentage)
+    svm_bow_svd = self.classification("svm", "bow", mf=max_features, svd=True)
+    rf_bow_svd = self.classification("rf", "bow", mf=max_features)
     svm_w2v = self.classification("svm", "w2v", mf=max_features)
-    rf_w2v = main.classification("rf", "w2v", mf=max_features)
+    rf_w2v = self.classification("rf", "w2v", mf=max_features)
+    mlp_hash = self.classification("mlp", "hash", mf=max_features)
 
-    reports = [svm_bow, rf_bow, svm_bow_svd, rf_bow_svd, svm_w2v, rf_w2v]
+    reports = [svm_bow, rf_bow, svm_bow_svd, rf_bow_svd, svm_w2v, rf_w2v, mlp_hash]
     evaluation_10fold_csv = "Statistic Measure, SVM(BoW), Random Forest(BoW), SVM(SVD), Random Forest(SVD), SVM(W2v), " \
-                            "Random Forest(W2V)\n" \
+                            "Random Forest(W2V), Our Method\n" \
                             "Accuracy,{}\n" \
                             "Precision,{}\n" \
                             "Recall,{}\n" \

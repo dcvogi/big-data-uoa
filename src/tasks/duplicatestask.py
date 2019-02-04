@@ -34,7 +34,7 @@ class DuplicatesTask(Task):
         # Keep the data wich are above the threshold
         similarities = pd.DataFrame(similarities[similarities > self.threshold])
         # Renaming
-        similarities.index.rename(['Document_Id1','Document_Id2'], inplace=True)
+        similarities.index.rename(['Document_ID1','Document_ID2'], inplace=True)
         similarities.reset_index(inplace=True)
         similarities.rename(columns={0: 'Similarity'}, inplace=True)
         
