@@ -38,29 +38,16 @@ class AnalyticsTask(Task):
         self.doc_labels = self.label_encoder.fit_transform(self.train_raw_labels)
 
     def support_vector_machine(self):
-        train_x, test_x, train_y, test_y = train_test_split(self.doc_vectors, self.doc_labels,
-                                                            test_size=self.test_size, random_state=self.random_state, stratify=self.doc_labels)
-
         svc = SVC(kernel='linear', random_state=self.random_state)
-        svc.fit(train_x, train_y)
 
         return svc
 
     def random_forest(self):
-        train_x, test_x, train_y, test_y = train_test_split(self.doc_vectors, self.doc_labels,
-                                                            test_size=self.test_size, random_state=self.random_state, stratify=self.doc_labels)
-
         rf = RandomForestClassifier(random_state=self.random_state)
-        rf.fit(train_x, train_y)
-
         return rf
 
     def multilayer_perceptron(self):
-        train_x, test_x, train_y, test_y = train_test_split(self.doc_vectors, self.doc_labels,
-                                                            test_size=self.test_size, random_state=self.random_state, stratify=self.doc_labels)
-
         mlp = MLPClassifier(solver='lbfgs', alpha=0.7, random_state=self.random_state)
-        mlp.fit(train_x, train_y)
 
         return mlp
 
@@ -77,8 +64,21 @@ class AnalyticsTask(Task):
         train_x, test_x, train_y, test_y = train_test_split(self.doc_vectors, self.doc_labels,
                                                             test_size=self.test_size)
 
+        clf.fit(train_x, train_y)
+
         predicted = clf.predict(test_x)
         return self.evaluate(test_y, predicted).__dict__
+
+    def compute_roc_auc_score(self, test_y, predicted):
+        from sklearn.preprocessing import LabelBinarizer
+        lb = LabelBinarizer()
+        lb.fit(test_y)
+
+        y1 = lb.transform(test_y)
+        y2 = lb.transform(predicted)
+
+        return roc_auc_score(y1, y2)
+
 
     def evaluate(self, test_y, predicted):
         prec = precision_score(test_y, predicted, average='macro')
@@ -86,9 +86,9 @@ class AnalyticsTask(Task):
         acc = accuracy_score(test_y, predicted)
         f1 = f1_score(test_y, predicted, average='macro')
         # TODO: Set an AUC score
-        auc_score = None#roc_auc_score(test_y, predicted)
+        auc_score = self.compute_roc_auc_score(test_y, predicted)
 
-        report = EvaluationReport(accuracy=acc, precision=prec, recall=rec, f1=f1, auc=None)
+        report = EvaluationReport(accuracy=acc, precision=prec, recall=rec, f1=f1, auc=auc_score)
 
         return report
 
