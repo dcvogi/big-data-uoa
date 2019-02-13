@@ -32,6 +32,6 @@ class EmbeddingsVectorizer:
     def fit_transform(self, docs):
         self.fit(docs)
 
-        vectors = [self.transform(doc) for doc in docs]
+        vectors = np.array([self.transform(doc) for doc in docs])
 
         return vectors
