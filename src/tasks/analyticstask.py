@@ -51,9 +51,7 @@ class AnalyticsTask(Task):
 
         return mlp
 
-    def test_model(self):
-        print "Classifier={}, Vectorizer={}, SVD={}".format(self.classifier, type(self.vectorizer).__name__, self.svd)
-
+    def get_model(self):
         if self.classifier is "svm":
             clf = self.support_vector_machine()
         elif self.classifier is "rf":
@@ -61,15 +59,39 @@ class AnalyticsTask(Task):
         elif self.classifier is "mlp":
             clf = self.multilayer_perceptron()
 
-        train_x, test_x, train_y, test_y = train_test_split(self.doc_vectors, self.doc_labels,
-                                                            test_size=self.test_size)
+        return clf
 
-        clf.fit(train_x, train_y)
+    def persist_model(self):
+        import pickle
+        import os
 
-        predicted = clf.predict(test_x)
-        return self.evaluate(test_y, predicted).__dict__
+        models_path = "../models"
+        if not os.path.exists(models_path):
+            os.mkdir(models_path)
+
+        clf = self.get_model()
+        clf.fit(self.doc_vectors, self.doc_labels)
+
+        model_output_path = "{}/{}.pickle".format(models_path, self.classifier)
+
+        with open(model_output_path, "w+") as out:
+            pickle.dump(clf, out)
+
+    def test_model(self):
+        print "Classifier={}, Vectorizer={}, SVD={}".format(self.classifier, type(self.vectorizer).__name__, self.svd)
+
+        clf = self.get_model(self.classifier)
+
+        return self.k_fold_validation(clf)
 
     def compute_roc_auc_score(self, test_y, predicted):
+        """
+        Computes the ROC AUC score for multi-class classification, using the LabelBinarizer
+        https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.LabelBinarizer.html
+        :param test_y: The test data labels
+        :param predicted: The predicted labels
+        :return: The ROC AUC score value
+        """
         from sklearn.preprocessing import LabelBinarizer
         lb = LabelBinarizer()
         lb.fit(test_y)
@@ -79,13 +101,50 @@ class AnalyticsTask(Task):
 
         return roc_auc_score(y1, y2)
 
+    def k_fold_validation(self, model, k=10):
+        from sklearn.model_selection import KFold
+
+        kfold = KFold(n_splits=k, shuffle=True)
+
+        folds = kfold.split(X=self.doc_vectors, y=self.doc_labels)
+
+        acc = 0.0
+        prec = 0.0
+        rec = 0.0
+        f1 = 0.0
+        auc_score = 0.0
+
+        for train_idx, test_idx in folds:
+            train_x = self.doc_vectors[train_idx]
+            train_y = self.doc_labels[train_idx]
+            test_x = self.doc_vectors[test_idx]
+            test_y = self.doc_labels[test_idx]
+
+            model.fit(train_x, train_y)
+
+            predicted = model.predict(test_x)
+
+            prec += precision_score(test_y, predicted, average='macro')
+            rec += recall_score(test_y, predicted, average='macro')
+            acc += accuracy_score(test_y, predicted)
+            f1 += f1_score(test_y, predicted, average='macro')
+            auc_score += self.compute_roc_auc_score(test_y, predicted)
+
+        acc = acc / k
+        prec = prec / k
+        rec = rec / k
+        f1 = f1 / k
+        auc_score = auc_score / k
+
+        report = EvaluationReport(accuracy=acc, precision=prec, recall=rec, f1=f1, auc=auc_score)
+
+        return report
 
     def evaluate(self, test_y, predicted):
         prec = precision_score(test_y, predicted, average='macro')
         rec = recall_score(test_y, predicted, average='macro')
         acc = accuracy_score(test_y, predicted)
         f1 = f1_score(test_y, predicted, average='macro')
-        # TODO: Set an AUC score
         auc_score = self.compute_roc_auc_score(test_y, predicted)
 
         report = EvaluationReport(accuracy=acc, precision=prec, recall=rec, f1=f1, auc=auc_score)
@@ -93,4 +152,8 @@ class AnalyticsTask(Task):
         return report
 
     def run_task(self):
-        return self.test_model()
+        evaluation_report_json = self.test_model().__dict__
+
+        print evaluation_report_json
+
+        return evaluation_report_json
