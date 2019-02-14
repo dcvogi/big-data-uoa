@@ -1,7 +1,9 @@
+# Local imports
 from .task import Task
 from .evaluation_report import EvaluationReport
 from vectorizer import VectorizerSelector
 
+# Third party imports
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
@@ -9,6 +11,10 @@ from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.decomposition import TruncatedSVD
+
+# Python imports
+import pickle
+import os
 
 
 class AnalyticsTask(Task):
@@ -29,6 +35,7 @@ class AnalyticsTask(Task):
 
         # Generate document vectors from raw documents
         self.doc_vectors = self.vectorizer.fit_transform(self.train_raw_docs)
+        self.test_vectors = self.vectorizer.transform(self.test_raw_docs)
         self.num_dimensions = max(self.doc_vectors[0].shape)
 
         if svd:
@@ -38,6 +45,9 @@ class AnalyticsTask(Task):
         self.doc_labels = self.label_encoder.fit_transform(self.train_raw_labels)
 
     def support_vector_machine(self):
+        """
+        :return: A SVC instance
+        """
         svc = SVC(kernel='linear', random_state=self.random_state)
 
         return svc
@@ -47,11 +57,18 @@ class AnalyticsTask(Task):
         return rf
 
     def multilayer_perceptron(self):
+        """
+        :return: A Multi-Layer Perceptron model instance
+        """
         mlp = MLPClassifier(solver='lbfgs', alpha=0.7, random_state=self.random_state)
 
         return mlp
 
     def get_model(self):
+        """
+        Returns the appropriate model according to the input keyword (svm, rf, mlp)
+        :return: The model
+        """
         if self.classifier is "svm":
             clf = self.support_vector_machine()
         elif self.classifier is "rf":
@@ -62,6 +79,10 @@ class AnalyticsTask(Task):
         return clf
 
     def persist_model(self):
+        """
+        Serializes a model instance and persists it to disk
+        :return: None
+        """
         import pickle
         import os
 
@@ -77,7 +98,30 @@ class AnalyticsTask(Task):
         with open(model_output_path, "w+") as out:
             pickle.dump(clf, out)
 
+    def make_predictions(self):
+        """
+        Loads a serialized model and produces the testSet_categories.csv file with the predictions
+        :return: None
+        """
+        model_path = "../models/mlp.pickle"
+        if not os.path.exists(model_path):
+            return
+
+        with open(model_path) as model_file:
+            model = pickle.loads(model_file.read())
+            predictions = model.predict(self.test_vectors)
+            labels = self.label_encoder.inverse_transform(predictions)
+            result = reduce(lambda x, y: "{}\n{}".format(x, y),
+                            map(lambda x: "{}\t{}".format(x[0], x[1]), zip(self.test_raw_docs, labels)))
+
+            with open("../testSet_categories.csv", "w+") as testset_out:
+                testset_out.write(result)
+
     def test_model(self):
+        """
+        Evaluates the model using k-fold validation
+        :return: The k-fold evaluation report
+        """
         print "Classifier={}, Vectorizer={}, SVD={}".format(self.classifier, type(self.vectorizer).__name__, self.svd)
 
         clf = self.get_model(self.classifier)
@@ -102,6 +146,12 @@ class AnalyticsTask(Task):
         return roc_auc_score(y1, y2)
 
     def k_fold_validation(self, model, k=10):
+        """
+        Performs a k-fold validation for all available evaluation metrics
+        :param model: The model to evaluate
+        :param k: The k (number of folds) value
+        :return: The evaluation report
+        """
         from sklearn.model_selection import KFold
 
         kfold = KFold(n_splits=k, shuffle=True)
