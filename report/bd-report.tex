@@ -1,0 +1,40 @@
+\documentclass[]{article}
+
+%opening
+\title{Big Data Mining - Assignment}
+\author{Dimitrios Vogiatzis}
+\author{
+	Dimitrios Vogiatzis\\
+	\texttt{CS2.18.0004}
+	\and
+	Victor Giannakouris\\
+	\texttt{CS3.18.0002}
+}
+
+\begin{document}
+\date{}
+\maketitle
+
+\section{Abstract}
+In this report we describe in detail the techniques that we used in the assignment of the Big Data Mining course. In summary, given an news input dataset the main goals of this assignment were to generate a Wordcloud for each possible category, duplicate detection with respect to the cosine distance metric, the implementation and evaluation of several state-of-the-art classification algorithms, as well as a custom architecture that overperforms the aforementioned state-of-the-art algorithms in terms of a number of evaluation metrics. Through experimental evaluation we showcase that our architecture achieves better performance for all of the evaluation metrics that we have used, including accuracy, precision, recall, ROC and F-Measure.
+\section{Introduction}
+\input{introduction}
+\section{Implementation}
+\subsection{Wordcloud}
+\subsection{Duplicates Detection}
+\subsection{Classification Implementation}
+In this section we describe in detail the libraries that we used in order to implement the required classification algorithms, vectorizers, as well as dimensionality reduction modules.
+%
+\subsubsection{Vectorizers}
+Two vectorizers were used for the assignment’s purposes, that is, a bag-of-words (BOW) model and the Word2Vec (W2V) model.
+\\
+\textbf{Bag-of-Words.} The bag-of-words \cite{BoW} model is one of the simplest approaches used in text mining. A document is represented as a $n$-sized vector, where $n$ the size of the dictionary. An element at the position $i$ of a vector $X$ represents the frequency of the $i^{th}$ word of the dictionary in the vector $X$, where $i$ denotes the word index.
+\\
+\textbf{Word2Vec.} Word2Vec \cite{mikolov2013distributed}
+
+\subsection{Neural Network Architecture}
+
+\bibliographystyle{unsrt}
+\bibliography{report}
+
+\end{document}
