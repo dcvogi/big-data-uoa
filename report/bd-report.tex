@@ -21,18 +21,13 @@ In this report we describe in detail the techniques that we used in the assignme
 \input{introduction}
 \section{Implementation}
 \subsection{Wordcloud}
+\input{wordcloud}
 \subsection{Duplicates Detection}
+\input{duplicates}
 \subsection{Classification Implementation}
-In this section we describe in detail the libraries that we used in order to implement the required classification algorithms, vectorizers, as well as dimensionality reduction modules.
-%
-\subsubsection{Vectorizers}
-Two vectorizers were used for the assignment’s purposes, that is, a bag-of-words (BOW) model and the Word2Vec (W2V) model.
-\\
-\textbf{Bag-of-Words.} The bag-of-words \cite{BoW} model is one of the simplest approaches used in text mining. A document is represented as a $n$-sized vector, where $n$ the size of the dictionary. An element at the position $i$ of a vector $X$ represents the frequency of the $i^{th}$ word of the dictionary in the vector $X$, where $i$ denotes the word index.
-\\
-\textbf{Word2Vec.} Word2Vec \cite{mikolov2013distributed}
-
+\input{classification}
 \subsection{Neural Network Architecture}
+\input{neuralnet}
 
 \bibliographystyle{unsrt}
 \bibliography{report}
