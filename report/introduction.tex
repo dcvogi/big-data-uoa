@@ -1,3 +1,17 @@
 \subsection{Goals}
 The goal of this assignment is the development of a system that will meet all the requirements by implementing modules for the following: 1. Generation of a Wordcloud for each of the possible news categories, 2. Detection of articles with high degree of similarity between them (duplicate detection), 3. The implementation and evaluation of several state-of-the-art classification algorithms and 4. The development of a custom architecture that will outperform the algorithms defined in 3.
 \subsection{Installation}
+In this section we describe the installation and running steps. For these steps, an installation of \emph{virtualenv}\footnote{https://virtualenv.pypa.io/en/latest/} is required.
+\begin{enumerate}
+	\item Clone the repository:\\
+	\texttt{git clone git@github.com:dcvogi/big-data-uoa.git}
+	\item Create a virtual environment using \emph{virtualenv}:\\
+	\texttt{virtualenv .venv -p /usr/bin/python2.7}
+	\item Load the virtual environment:\\ 
+	\texttt{source .venv/bin/active}
+	\item Install the requirements defined in \emph{src/requirements.txt}:\\
+	\texttt{pip install -r requirements.txt}
+	\item Run \emph{main.py}:\\
+	\texttt{python main.py}
+\end{enumerate}
+After step 5 is completed, the results including \emph{duplicatePairs.csv}, \emph{EvaluationMetric\_10fold.csv} and all the .png Wordcloud images will be generated inside \emph{results} folder.
