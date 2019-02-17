@@ -2,21 +2,4 @@ This section is responsible for describing in detail the methodology used in ord
 \subsubsection{Vectorizer}
 In order to compute the similarity of the documents, we must first  produce the term vectors for each document of the dataset (test set). To do that we used TfidfVectorizer from Python sklearn library. TfidfVectorizer converts a collection of raw documents to a matrix of TF-IDF features. TF-IDF, short for term frequency-inverse document frequency, is a numerical statistic that is intended to reflect how important a word is to a document in a collection or corpus. \cite{rajaraman2011datamining}
 \subsubsection{Similarity detection}
-At this stage and after we produced the term vectors with TfidfVectorizer, we compute the cosine similarity between the  vectors of each document versus the others, ending up with a $n \times n$  matrix where the value of the pair $\imath, \jmath$ corresponds to the cosine of the angle between them (similarity). In order to avoid double-checking the same pairs, we traverse the upper triangular of the matrix keeping only the pairs with similarity greater than the input threshold $\theta$. Based on those pairs and with $\theta = 0.7$, an output file (duplicatePairs.csv) is generated. Below is a small sample of the output file: \newline
-
-\begin{tabular}{ |M{3cm}|M{3cm}|M{3cm}|  }
-\hline
-\rowcolor{lightgray!60}
-\multicolumn{3}{|c|}{\textbf{duplicatePairs.csv}} \\
-\hline 
-\rowcolor{lightgray!40}
-\textbf{Document\_ID1}& \textbf{Document\_ID2} & \textbf{Similarity} \\
-\hline
-10802 & 10213 & 0.7104 \\
-10802 & 13991 & 0.7073 \\
-6727 & 1015 & 0.7134 \\
-... & ... & ... \\
-7811 & 11213 & 0.7150 \\
-14607 & 11213 & 0.7661 \\
-\hline
-\end{tabular}
+At this stage and after we produced the term vectors with TfidfVectorizer, we compute the cosine similarity between the  vectors of each document versus the others, ending up with a $n \times n$  matrix where the value of the pair $\imath, \jmath$ corresponds to the cosine of the angle between them (similarity). In order to avoid double-checking the same pairs, we traverse the upper triangular of the matrix keeping only the pairs with similarity greater than the input threshold $\theta$. 
