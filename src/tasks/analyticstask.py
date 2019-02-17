@@ -125,7 +125,7 @@ class AnalyticsTask(Task):
         """
         print "Classifier={}, Vectorizer={}, SVD={}".format(self.classifier, type(self.vectorizer).__name__, self.svd)
 
-        clf = self.get_model(self.classifier)
+        clf = self.get_model()
 
         return self.k_fold_validation(clf)
 
