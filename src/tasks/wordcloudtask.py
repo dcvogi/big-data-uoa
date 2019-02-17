@@ -1,7 +1,8 @@
 from task import Task
-
+import numpy as np
+from PIL import Image
 # Third-party libs
-from wordcloud import WordCloud, STOPWORDS
+from wordcloud import WordCloud, STOPWORDS, ImageColorGenerator
 from matplotlib import pyplot as plt
 
 
@@ -10,10 +11,20 @@ class WordCloudTask(Task):
         Task.__init__(self, train, test)
 
     def run_task(self):
-        text = ' '.join(self.train['Content'].values)
-        stop_words = set(STOPWORDS)
 
-        # WordCloud generation
-        wc = WordCloud(max_words=1000, margin=10, stopwords=stop_words, random_state=1).generate(text)
-        plt.imshow(wc)
-        plt.show()
+        pivot = self.train.pivot(index='Id', columns='Category', values='Content').apply(
+            lambda x: x.str.cat(sep=' '))
+
+        for index in pivot.index:
+            print("Generating wordcloud {}".format(index))
+            # WordCloud generation
+            mask = np.array(Image.open('../datasets/' + str(index) + '.png'))
+            wc = WordCloud(background_color='white', mask=mask, stopwords=STOPWORDS)
+            wc.generate(pivot[index])
+
+            # create coloring from image
+            image_colors = ImageColorGenerator(mask)
+            fig, axes = plt.subplots(figsize=(12,8))
+            plt.imshow(wc.recolor(), interpolation='bilinear')
+            plt.axis("off")
+            plt.savefig('../results/Wordcloud_'  + str(index) + '.png')

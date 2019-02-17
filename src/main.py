@@ -2,7 +2,7 @@ import pandas as pd
 import pickle
 import os
 
-from tasks import WordCloudTask, WordCloudTask2, AnalyticsTask, DuplicatesTask
+from tasks import WordCloudTask, AnalyticsTask, DuplicatesTask
 
 
 class Main:
@@ -22,7 +22,7 @@ class Main:
 
 
   def wordcloud(self):
-    wc = WordCloudTask2(self.train_set, self.test_set)
+    wc = WordCloudTask(self.train_set, self.test_set)
     wc.run()
 
   def duplicates(self, vectorizer, threshold, stop_words):
@@ -67,4 +67,6 @@ class Main:
 
 
 main = Main()
-main.predictions()
+main.wordcloud()
+main.export_evaluation_report()
+main.duplicates("tfidf", 0.7, "english")
