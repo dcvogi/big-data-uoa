@@ -1,5 +1,8 @@
 \documentclass[]{article}
-
+\usepackage{array}
+\usepackage[table]{xcolor}
+\newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}
+\renewcommand{\arraystretch}{1.2}
 %opening
 \title{Big Data Mining - Assignment}
 \author{Dimitrios Vogiatzis}
@@ -22,6 +25,7 @@ In this report we describe in detail the techniques that we used in the assignme
 \section{Implementation}
 \subsection{Wordcloud}
 \input{wordcloud}
+\pagebreak
 \subsection{Duplicates Detection}
 \input{duplicates}
 \subsection{Classification Implementation}

@@ -1,0 +1,7 @@
+In order to achieve better performance than the algorithms described in subsection 3.3, we decided to proceed with changing both the classification algorithm and the vectorizer used both for experimentation and performance optimization.
+
+\subsubsection{Vectorizer}
+For this architecture we used Python's scikit-learn HashingVectorizer. HashingVectorizer applies a hashing function to term frequency counts in each document making it an efficient way of mapping terms to features. Even though using a hash function can lead to collisions (e.g. distinct tokens mapped to the same feature index), with HashingVectorizer this is rarely an issue as there is a parameter, \textit{n\_features}, that can be tweaked to avoid collisions. The parameter \textit{n\_features} refers to the number of features (columns) in the output matrices. In our tests we tried different values for \textit{n\_features} and after many tests we decided that with the given dataset, the most performing value was \textit{n\_features}=$2^{18}$ which is the recommended one for text classification problems.
+
+\subsubsection{Classification Algorithm}
+In the shake of experimentation we decided to implement a neural network for this task.
