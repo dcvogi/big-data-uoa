@@ -3,6 +3,15 @@ In this section we describe in detail the libraries that we used in order to imp
 \subsubsection{Vectorizers}
 Two vectorizers were used for the assignment’s purposes, that is, a bag-of-words (BOW) model and the Word2Vec (W2V) model.
 \\
-\textbf{Bag-of-Words.} The bag-of-words \cite{BoW} model is one of the simplest approaches used in text mining. A document is represented as a $n$-sized vector, where $n$ the size of the dictionary. An element at the position $i$ of a vector $X$ represents the frequency of the $i^{th}$ word of the dictionary in the vector $X$, where $i$ denotes the word index.
-\\
-\textbf{Word2Vec.} Word2Vec \cite{mikolov2013distributed}
+\textbf{Bag-of-Words.} The bag-of-words\cite{BoW} model is one of the simplest approaches used in text mining. A document is represented as a $n$-sized vector, where $n$ the size of the dictionary. An element at the position $i$ of a vector $X$ represents the frequency of the $i^{th}$ word of the dictionary in the vector $X$, where $i$ denotes the word index. We used the \emph{CountVectorizer} instance of scikit-learn library for leveraging the Bag-of-Words model. Below there is a sample code snippet.
+\begin{verbatim}
+	from sklearn.feature_extraction.text import CountVectorizer
+	
+	input_docs = open("docs.txt").readlines()
+	cv = CountVectorizer()
+	cv.fit(input_docs)
+\end{verbatim}
+%
+\textbf{Word2Vec.} Word2Vec\cite{mikolov2013distributed} is a more complex model. In summary, Word2Vec is a two-layer neural network trained to reconstruct linguistic contexts of words, which are also called \emph{word embeddings}\cite{WordEmbedding}. In this model each word is represented as a vector of numbers, in contrast with conventional models like TF-IDF where each word is represented as a single weight number. The main benefit of representing words as vectors is that different words with the same meaning will be close in the vector space, i.e. the word "king" will be close to the word "queen".
+
+To implement Word2Vec we used the gensim\footnote{\url{https://radimrehurek.com/gensim/}} library

@@ -1,4 +1,5 @@
 import pandas as pd
+import pickle
 import os
 
 from tasks import WordCloudTask, WordCloudTask2, AnalyticsTask, DuplicatesTask
@@ -12,6 +13,13 @@ class Main:
 
   test_set = pd.read_csv("../datasets/test_set.csv", sep="\t")
   train_set = pd.read_csv("../datasets/train_set.csv", sep="\t")
+
+
+  def predictions(self):
+      analytics = AnalyticsTask(self.train_set, self.test_set, classifier="mlp", vectorizer="hash", test_size=0.2)
+
+      analytics.make_predictions()
+
 
   def wordcloud(self):
     wc = WordCloudTask2(self.train_set, self.test_set)
@@ -59,6 +67,4 @@ class Main:
 
 
 main = Main()
-main.export_evaluation_report()
-main.wordcloud()
-main.duplicates("tfidf", 0.7, "english")
+main.predictions()
