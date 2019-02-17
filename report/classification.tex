@@ -12,6 +12,37 @@ Two vectorizers were used for the assignment’s purposes, that is, a bag-of-wor
 	cv.fit(input_docs)
 \end{verbatim}
 %
-\textbf{Word2Vec.} Word2Vec\cite{mikolov2013distributed} is a more complex model. In summary, Word2Vec is a two-layer neural network trained to reconstruct linguistic contexts of words, which are also called \emph{word embeddings}\cite{WordEmbedding}. In this model each word is represented as a vector of numbers, in contrast with conventional models like TF-IDF where each word is represented as a single weight number. The main benefit of representing words as vectors is that different words with the same meaning will be close in the vector space, i.e. the word "king" will be close to the word "queen".
+\textbf{Word2Vec.} Word2Vec\cite{mikolov2013distributed} is a more complex model. In summary, Word2Vec is a two-layer neural network trained to reconstruct linguistic contexts of words, which are also called \emph{word embeddings}\cite{WordEmbedding}. In this model each word is represented as a vector of numbers, in contrast with conventional models like TF-IDF where each word is represented as a single weight number. The main benefit of representing words as vectors is that different words with the same meaning will be close each other in the vector space, i.e. the word "king" will be close to the word "queen".
 
-To implement Word2Vec we used the gensim\footnote{\url{https://radimrehurek.com/gensim/}} library
+To implement Word2Vec we used the gensim\footnote{\url{https://radimrehurek.com/gensim/}} library. As aforementioned, Word2Vec converts each word into a vector of numbers and thus, each input document vector is transformed into a vector of word vectors. This vector of vectors form leads into compatibility issues, as far as scikit's classification models take as input only vectors of numbers. To resolve that, we implemented a custom vectorizer class that overrides the three basic vectorization methods, that is, \texttt{fit()}, \texttt{transform()} and \texttt{fit\_transform()}. The \texttt{fit()} method generates a Word2Vec model using the \texttt{from gensim.models import Word2Vec} class. The \texttt{transform()} takes as input a document in vector form. First, the document vector is being transformed into a vector of word vectors. Next, we generate an average vector, where each word vector is transformed into a mean value, resulting into a final document vector of means. Given an input vector $X$ as follows:
+\begin{equation*}
+		X=
+	\begin{bmatrix}
+	w_1\\
+	w_2\\
+	.\\
+	.\\
+	w_n
+	\end{bmatrix} 
+	\space
+\end{equation*}
+The $transform()$ method  can be defined by equation \ref{eq1} .
+\begin{equation}
+\label{eq1}
+	transform(X) = mean(X) =
+	\begin{bmatrix}
+	mean(w_1) \\
+	mean(w_2) \\
+
+	. \\
+	mean(w_n)
+	\end{bmatrix} 
+	=
+	\begin{bmatrix}
+	w_1' \\
+    w_2' \\
+	. \\
+	. \\
+	w_n'
+	\end{bmatrix} 
+\end{equation}
