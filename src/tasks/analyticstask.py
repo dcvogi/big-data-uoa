@@ -27,6 +27,7 @@ class AnalyticsTask(Task):
         self.train_raw_docs = self.train['Content'].values
         self.train_raw_labels = self.train['Category'].values
         self.test_raw_docs = self.test['Content'].values
+        self.test_raw_docs_ids = self.test['Id'].values
         self.classifier = classifier
         self.test_size = test_size
         self.svd = svd
@@ -112,7 +113,7 @@ class AnalyticsTask(Task):
             predictions = model.predict(self.test_vectors)
             labels = self.label_encoder.inverse_transform(predictions)
             result = reduce(lambda x, y: "{}\n{}".format(x, y),
-                            map(lambda x: "{}\t{}".format(x[0], x[1]), zip(self.test_raw_docs, labels)))
+                            map(lambda x: "{}\t{}".format(x[0], x[1]), zip(self.test_raw_docs_ids, labels)))
 
             with open("../testSet_categories.csv", "w+") as testset_out:
                 testset_out.write(result)
