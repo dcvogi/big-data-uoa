@@ -17,21 +17,26 @@ class EmbeddingsVectorizer:
 
         return self
 
-    def transform(self, doc):
-        tokenized_doc = [word for word in doc.lower().split() if word in self.word2idx]
+    def transform(self, docs):
+        mean_vectors = []
+        for doc in docs:
+            tokenized_doc = [word for word in doc.lower().split() if word in self.word2idx]
 
-        if not tokenized_doc:
-            return np.zeros(self.model.vector_size)
+            if not tokenized_doc:
+                doc_vector = [np.zeros(self.model.vector_size)]
+            else:
+                doc_vector = [self.model[word] for word in tokenized_doc]
 
-        doc_vector = [self.model[word] for word in tokenized_doc]
+            mean_vector = np.mean(doc_vector, axis=0)
 
-        mean_vector = np.mean(doc_vector, axis=0)
+            mean_vectors.append(mean_vector)
 
-        return mean_vector
+        result = np.array(mean_vectors)
+        return result
 
     def fit_transform(self, docs):
         self.fit(docs)
 
-        vectors = np.array([self.transform(doc) for doc in docs])
+        vectors = self.transform(docs)
 
         return vectors
