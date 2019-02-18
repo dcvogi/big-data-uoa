@@ -112,10 +112,11 @@ class AnalyticsTask(Task):
             model = pickle.loads(model_file.read())
             predictions = model.predict(self.test_vectors)
             labels = self.label_encoder.inverse_transform(predictions)
-            result = reduce(lambda x, y: "{}\n{}".format(x, y),
-                            map(lambda x: "{}\t{}".format(x[0], x[1]), zip(self.test_raw_docs_ids, labels)))
+            result = "Test_Document_ID\tPredicted_Category\n" + reduce(lambda x, y: "{}\n{}".format(x, y),
+                                                                       map(lambda x: "{}\t{}".format(x[0], x[1]),
+                                                                           zip(self.test_raw_docs_ids, labels)))
 
-            with open("../testSet_categories.csv", "w+") as testset_out:
+            with open("../results/testSet_categories.csv", "w+") as testset_out:
                 testset_out.write(result)
 
     def test_model(self):
